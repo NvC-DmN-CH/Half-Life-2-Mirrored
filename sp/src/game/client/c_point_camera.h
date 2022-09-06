@@ -37,6 +37,9 @@ public:
 	float			GetFogMaxDensity();
 	float			GetFogEnd();
 	bool			UseScreenAspectRatio() const { return m_bUseScreenAspectRatio; }
+	bool			IsMirrored();
+	float			GetOffsetX();
+	float			GetOffsetY();
 
 	virtual void	GetToolRecordingState( KeyValues *msg );
 
@@ -50,6 +53,9 @@ private:
 	float m_flFogMaxDensity;
 	bool m_bActive;
 	bool m_bUseScreenAspectRatio;
+	bool m_bMirrored;
+	float m_fOffsetX;
+	float m_fOffsetY;
 
 public:
 	C_PointCamera	*m_pNext;

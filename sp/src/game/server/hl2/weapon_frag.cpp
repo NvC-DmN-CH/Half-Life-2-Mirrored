@@ -390,7 +390,7 @@ void CWeaponFrag::ThrowGrenade( CBasePlayer *pPlayer )
 	Vector	vForward, vRight;
 
 	pPlayer->EyeVectors( &vForward, &vRight, NULL );
-	Vector vecSrc = vecEye + vForward * 18.0f + vRight * 8.0f;
+	Vector vecSrc = vecEye + vForward * 18.0f - vRight * 8.0f;
 	CheckThrowPosition( pPlayer, vecEye, vecSrc );
 //	vForward[0] += 0.1f;
 	vForward[2] += 0.1f;
@@ -418,7 +418,7 @@ void CWeaponFrag::LobGrenade( CBasePlayer *pPlayer )
 	Vector	vForward, vRight;
 
 	pPlayer->EyeVectors( &vForward, &vRight, NULL );
-	Vector vecSrc = vecEye + vForward * 18.0f + vRight * 8.0f + Vector( 0, 0, -8 );
+	Vector vecSrc = vecEye + vForward * 18.0f - vRight * 8.0f + Vector( 0, 0, -8 );
 	CheckThrowPosition( pPlayer, vecEye, vecSrc );
 	
 	Vector vecThrow;

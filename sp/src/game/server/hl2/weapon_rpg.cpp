@@ -1606,7 +1606,7 @@ void CWeaponRPG::PrimaryAttack( void )
 
 	pOwner->EyeVectors( &vForward, &vRight, &vUp );
 
-	Vector	muzzlePoint = pOwner->Weapon_ShootPosition() + vForward * 12.0f + vRight * 6.0f + vUp * -3.0f;
+	Vector	muzzlePoint = pOwner->Weapon_ShootPosition() + vForward * 12.0f - vRight * 6.0f + vUp * -3.0f;
 
 	QAngle vecAngles;
 	VectorAngles( vForward, vecAngles );

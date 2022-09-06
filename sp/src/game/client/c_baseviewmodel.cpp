@@ -80,7 +80,7 @@ void FormatViewModelAttachment( Vector &vOrigin, bool bInverse )
 		vTransformed.x *= factorX;
 		vTransformed.y *= factorY;
 	}
-
+	
 
 
 	// Transform back to world space.
@@ -211,8 +211,7 @@ inline bool C_BaseViewModel::ShouldFlipViewModel()
 		return pWeapon->m_bFlipViewModel != cl_flipviewmodels.GetBool();
 	}
 #endif
-
-	return false;
+	return true;
 }
 
 

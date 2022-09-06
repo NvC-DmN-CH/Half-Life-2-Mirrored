@@ -163,6 +163,7 @@ static ConVar r_screenfademinsize( "r_screenfademinsize", "0" );
 static ConVar r_screenfademaxsize( "r_screenfademaxsize", "0" );
 static ConVar cl_drawmonitors( "cl_drawmonitors", "1" );
 static ConVar r_eyewaterepsilon( "r_eyewaterepsilon", "10.0f", FCVAR_CHEAT );
+extern ConVar r_mirrored("r_mirrored", "1", FCVAR_CHEAT, "Flips the screen");
 
 #ifdef TF_CLIENT_DLL
 static ConVar pyro_dof( "pyro_dof", "1", FCVAR_ARCHIVE );
@@ -1223,6 +1224,371 @@ void CViewRender::PerformScreenOverlay( int x, int y, int w, int h )
 	}
 }
 
+void CViewRender::DrawQuad(IMaterial* pMat, int width, int height)
+{
+	float halfPixelWidth = -0.5f / width;
+	float halfPixelHeight = -0.5f / height;
+
+	CMatRenderContextPtr pRenderContext(materials);
+
+	// MUST bind material before building a mesh
+	// this will tell the mesh builder what vertex format the shader wants
+	pRenderContext->Bind(pMat);
+
+	pRenderContext->MatrixMode(MATERIAL_PROJECTION);
+	pRenderContext->PushMatrix();
+	pRenderContext->LoadIdentity();
+
+	pRenderContext->MatrixMode(MATERIAL_VIEW);
+	pRenderContext->PushMatrix();
+	pRenderContext->LoadIdentity();
+
+	CMeshBuilder meshBuilder;
+	IMesh* pMesh = pRenderContext->GetDynamicMesh(false);
+	meshBuilder.Begin(pMesh, MATERIAL_QUADS, 1);
+
+//	meshBuilder.Position3f(halfPixelWidth - 1, halfPixelHeight + 1, 0);
+//	meshBuilder.TexCoord2f(0, 1, 0);
+//	meshBuilder.AdvanceVertex();
+//
+//	meshBuilder.Position3f(halfPixelWidth + 1, halfPixelHeight + 1, 0);
+//	meshBuilder.TexCoord2f(0, 0, 0);
+//	meshBuilder.AdvanceVertex();
+//
+//	meshBuilder.Position3f(halfPixelWidth + 1, halfPixelHeight - 1, 0);
+//	meshBuilder.TexCoord2f(0, 0, 1);
+//	meshBuilder.AdvanceVertex();
+//
+//	meshBuilder.Position3f(halfPixelWidth - 1, halfPixelHeight - 1, 0);
+//	meshBuilder.TexCoord2f(0, 1, 1);
+//	meshBuilder.AdvanceVertex();
+
+	meshBuilder.Position3f(-1, 1, 0.5f);
+	meshBuilder.TexCoord2f(0, 1 + halfPixelWidth, 0 + halfPixelHeight);
+	meshBuilder.AdvanceVertex();
+
+	meshBuilder.Position3f(1, 1, 0.5f);
+	meshBuilder.TexCoord2f(0, 0 + halfPixelWidth, 0 + halfPixelHeight);
+	meshBuilder.AdvanceVertex();
+
+	meshBuilder.Position3f(1, -1, 0.5f);
+	meshBuilder.TexCoord2f(0, 0 + halfPixelWidth, 1 + halfPixelHeight);
+	meshBuilder.AdvanceVertex();
+
+	meshBuilder.Position3f(-1, -1, 0.5f);
+	meshBuilder.TexCoord2f(0, 1 + halfPixelWidth, 1 + halfPixelHeight);
+	meshBuilder.AdvanceVertex();
+
+	meshBuilder.End();
+
+	pMesh->Draw();
+
+	pRenderContext->MatrixMode(MATERIAL_PROJECTION);
+	pRenderContext->PopMatrix();
+
+	pRenderContext->MatrixMode(MATERIAL_VIEW);
+	pRenderContext->PopMatrix();
+}
+
+void CViewRender::DrawQuadOffsetUV(IMaterial* pMat, int width, int height, float du, float dv)
+{
+	float halfPixelWidth = -0.5f / width;
+	float halfPixelHeight = -0.5f / height;
+
+	CMatRenderContextPtr pRenderContext(materials);
+
+	// MUST bind material before building a mesh
+	// this will tell the mesh builder what vertex format the shader wants
+	pRenderContext->Bind(pMat);
+
+	pRenderContext->MatrixMode(MATERIAL_PROJECTION);
+	pRenderContext->PushMatrix();
+	pRenderContext->LoadIdentity();
+
+	pRenderContext->MatrixMode(MATERIAL_VIEW);
+	pRenderContext->PushMatrix();
+	pRenderContext->LoadIdentity();
+
+	CMeshBuilder meshBuilder;
+	IMesh* pMesh = pRenderContext->GetDynamicMesh(false);
+	meshBuilder.Begin(pMesh, MATERIAL_QUADS, 1);
+
+	meshBuilder.Position3f(-1, 1, 0.5f);
+	meshBuilder.TexCoord2f(0, 1 + halfPixelWidth + du, 0 + halfPixelHeight + dv);
+	meshBuilder.AdvanceVertex();
+
+	meshBuilder.Position3f(1, 1, 0.5f);
+	meshBuilder.TexCoord2f(0, 0 + halfPixelWidth + du, 0 + halfPixelHeight + dv);
+	meshBuilder.AdvanceVertex();
+
+	meshBuilder.Position3f(1, -1, 0.5f);
+	meshBuilder.TexCoord2f(0, 0 + halfPixelWidth + du, 1 + halfPixelHeight + dv);
+	meshBuilder.AdvanceVertex();
+
+	meshBuilder.Position3f(-1, -1, 0.5f);
+	meshBuilder.TexCoord2f(0, 1 + halfPixelWidth + du, 1 + halfPixelHeight + dv);
+	meshBuilder.AdvanceVertex();
+
+	meshBuilder.End();
+
+	pMesh->Draw();
+
+	pRenderContext->MatrixMode(MATERIAL_PROJECTION);
+	pRenderContext->PopMatrix();
+
+	pRenderContext->MatrixMode(MATERIAL_VIEW);
+	pRenderContext->PopMatrix();
+}
+
+static Vector mainmenu_lambda_vertices_mirror[16] =
+{
+	Vector(-0.538993f, 0.950444f, 0.5f),
+	Vector(-0.011702f, 0.950444f, 0.5f),
+	Vector(-0.168129f, 0.651115f, 0.5f),
+	Vector(-0.538993f, 0.651115f, 0.5f),
+
+	Vector(-0.011702f, 0.950444f, 0.5f),
+	Vector(0.620648f, -0.657148f, 0.5f),
+	Vector(0.372089f, -0.958802f, 0.5f),
+	Vector(-0.262723f, 0.731611f, 0.5f),
+
+	Vector(0.856934f, -0.495367f, 0.5f),
+	Vector(0.943958f, -0.79367f, 0.5f),
+	Vector(0.372089f, -0.958802f, 0.5f),
+	Vector(0.534592f, -0.598494f, 0.5f),
+
+	Vector(-0.122613f, 0.435451f, 0.5f),
+	Vector(0.016363f, 0.06093f, 0.5f),
+	Vector(-0.575575f, -0.870882f, 0.5f),
+	Vector(-0.931487f, -0.870882f, 0.5f),
+};
+
+static Vector mainmenu_lambda_vertices_outline[20] =
+{
+	Vector(-0.577388f, 0.988839f, 0.5f),
+	Vector(0.014453f, 0.988839f, 0.5f),
+	Vector(-0.259086f, 0.61272f, 0.5f),
+	Vector(-0.577388f, 0.61272f, 0.5f),
+
+	Vector(0.014453f, 0.988839f, 0.5f),
+	Vector(0.613098f, -0.533066f, 0.5f),
+	Vector(-0.183173f, 0.410574f, 0.5f),
+	Vector(-0.259086f, 0.61272f, 0.5f),
+
+	Vector(-0.183173f, 0.410574f, 0.5f),
+	Vector(0.613098f, -0.533066f, 0.5f),
+	Vector(0.348628f, -1.00554f, 0.5f),
+	Vector(-0.009619f, -0.051578f, 0.5f),
+
+	Vector(0.613098f, -0.533066f, 0.5f),
+	Vector(0.882759f, -0.446792f, 0.5f),
+	Vector(0.991599f, -0.819877f, 0.5f),
+	Vector(0.348628f, -1.00554f, 0.5f),
+
+	Vector(-0.183173f, 0.410574f, 0.5f),
+	Vector(-0.009619f, -0.051578f, 0.5f),
+	Vector(-0.554479f, -0.909277f, 0.5f),
+	Vector(-1.00042f, -0.909277f, 0.5f),
+};
+
+/*
+Vector mainmenu_lambda_vertices_mirror_segmented[16] =
+{
+Vector(-0.538993f, 0.950444f, 0.5f),
+Vector(-0.021702f, 0.950444f, 0.5f),
+Vector(-0.242494f, 0.651115f, 0.5f),
+Vector(-0.538993f, 0.651115f, 0.5f),
+
+Vector(-0.002669f, 0.927478f, 0.5f),
+Vector(0.581502f, -0.557631f, 0.5f),
+Vector(0.363021f, -0.934653f, 0.5f),
+Vector(-0.223425f, 0.626967f, 0.5f),
+
+Vector(0.856934f, -0.495367f, 0.5f),
+Vector(0.943958f, -0.79367f, 0.5f),
+Vector(0.382089f, -0.958802f, 0.5f),
+Vector(0.600536f, -0.580596f, 0.5f),
+
+Vector(-0.160242f, 0.37468f, 0.5f),
+Vector(-0.020728f, 0.002543f, 0.5f),
+Vector(-0.575575f, -0.870882f, 0.5f),
+Vector(-0.931487f, -0.870882f, 0.5f),
+};
+*/
+
+
+void CViewRender::DrawMainMenuLambda(IMaterial* pMat1, IMaterial* pMat2, int width, int height, float dx, float dy, float aspect)
+{
+	float halfPixelWidth = -0.5f / width;
+	float halfPixelHeight = -0.5f / height;
+
+	float scale = 0.65f;
+
+	float sizeX;
+	float sizeY;
+	if (aspect > 1)
+	{
+		sizeX = 1 / aspect;
+		sizeY = 1;
+	}
+	else
+	{
+		sizeX = 1;
+		sizeY = 1 / aspect;
+	}
+	sizeX *= scale;
+	sizeY *= scale;
+
+
+
+	float moveDistHorz = sizeX * 0.32f;
+	float moveDistVert = sizeY * 0.08f;
+
+
+	// dx is [0 1] and dy is [-0.5 0.5]
+	dy -= 0.5f;
+	dx *= -moveDistHorz;		// negative because moving the cursor right should move the logo to the left
+	dy *= moveDistVert;
+
+
+
+	//Msg("dx: %f, dy: %f\n", dx, dy);
+
+
+	float originX = 1 - sizeX;
+	float originY = -1 + sizeY;
+
+	// Accomodate for the cursor movement
+	originY += moveDistVert * 0.5f;
+
+	
+
+	// Render !
+
+	CMatRenderContextPtr pRenderContext(materials);
+
+	// MUST bind material before building a mesh
+	// this will tell the mesh builder what vertex format the shader wants
+	pRenderContext->Bind(pMat1);
+
+	pRenderContext->MatrixMode(MATERIAL_PROJECTION);
+	pRenderContext->PushMatrix();
+	pRenderContext->LoadIdentity();
+
+	pRenderContext->MatrixMode(MATERIAL_VIEW);
+	pRenderContext->PushMatrix();
+	pRenderContext->LoadIdentity();
+
+
+	// Render Outline
+	CMeshBuilder meshBuilder;
+	IMesh* pMesh = pRenderContext->GetDynamicMesh(false);
+	meshBuilder.Begin(pMesh, MATERIAL_QUADS, 5);
+
+
+	float x, y, us, vt;
+	for (int i = 0; i < 20; i++)
+	{
+		x = mainmenu_lambda_vertices_outline[i].x * sizeX + originX + dx;
+		y = mainmenu_lambda_vertices_outline[i].y * sizeY + originY + dy;
+
+		meshBuilder.Position3f(x, y, 0.8f);
+		meshBuilder.TexCoord2f(0, 0, 0);
+		meshBuilder.AdvanceVertex();
+	}
+
+	meshBuilder.End();
+
+	pMesh->Draw();
+
+
+	pRenderContext->MatrixMode(MATERIAL_PROJECTION);
+	pRenderContext->PopMatrix();
+
+	pRenderContext->MatrixMode(MATERIAL_VIEW);
+	pRenderContext->PopMatrix();
+
+
+	// Render Mirror
+	pRenderContext->Bind(pMat2);
+
+	pRenderContext->MatrixMode(MATERIAL_PROJECTION);
+	pRenderContext->PushMatrix();
+	pRenderContext->LoadIdentity();
+
+	pRenderContext->MatrixMode(MATERIAL_VIEW);
+	pRenderContext->PushMatrix();
+	pRenderContext->LoadIdentity();
+
+	CMeshBuilder meshBuilder2;
+	IMesh* pMesh2 = pRenderContext->GetDynamicMesh(false);
+	meshBuilder2.Begin(pMesh2, MATERIAL_QUADS, 4);
+
+
+	for (int i = 0; i < 16; i++)
+	{
+		x = mainmenu_lambda_vertices_mirror[i].x * sizeX + originX + dx;
+		y = mainmenu_lambda_vertices_mirror[i].y * sizeY + originY + dy;
+
+		us = (x / 2.0f) + 0.5f;
+		vt = -(y / 2.0f) + 0.5f;
+		meshBuilder2.Position3f(x, y, 0.5f);
+		meshBuilder2.TexCoord2f(0, us + halfPixelWidth, vt + halfPixelHeight);
+		meshBuilder2.AdvanceVertex();
+	}
+
+	meshBuilder2.End();
+
+	pMesh2->Draw();
+
+
+	pRenderContext->MatrixMode(MATERIAL_PROJECTION);
+	pRenderContext->PopMatrix();
+
+	pRenderContext->MatrixMode(MATERIAL_VIEW);
+	pRenderContext->PopMatrix();
+}
+
+
+/*
+void CViewRender::PerformScreenMirrorOverlay(int x, int y, int w, int h)
+{
+	//VPROF("CViewRender::PerformScreenOverlay()");
+
+	//ITexture	*pFullFrameFB1 = materials->FindTexture("_rt_FullFrameFB1", TEXTURE_GROUP_RENDER_TARGET);
+	IMaterial	*mirror_material = materials->FindMaterial("engine/mirror_screen", TEXTURE_GROUP_VGUI);
+	mirror_material->IncrementReferenceCount();
+
+
+	//tmZone(TELEMETRY_LEVEL0, TMZF_NONE, "%s", __FUNCTION__);
+
+	if (mirror_material->NeedsFullFrameBufferTexture())
+	{
+		// FIXME: check with multi/sub-rect renders. Should this be 0,0,w,h instead?
+		DrawScreenEffectMaterial(mirror_material, x, y, w, h);
+	}
+	else if (mirror_material->NeedsPowerOfTwoFrameBufferTexture())
+	{
+		// First copy the FB off to the offscreen texture
+		UpdateRefractTexture(x, y, w, h, true);
+
+		// Now draw the entire screen using the material...
+		CMatRenderContextPtr pRenderContext(materials);
+		ITexture *pTexture = GetPowerOfTwoFrameBufferTexture();
+		int sw = pTexture->GetActualWidth();
+		int sh = pTexture->GetActualHeight();
+		// Note - don't offset by x,y - already done by the viewport.
+		pRenderContext->DrawScreenSpaceRectangle(mirror_material, 0, 0, w, h,
+			0, 0, sw - 1, sh - 1, sw, sh);
+	}
+	else
+	{
+		byte color[4] = { 255, 255, 255, 255 };
+		render->ViewDrawFade(color, mirror_material);
+	}
+}
+*/
+
 void CViewRender::DrawUnderwaterOverlay( void )
 {
 	IMaterial *pOverlayMat = m_UnderWaterOverlayMaterial;
@@ -1975,7 +2341,29 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 		pRenderContext.SafeRelease();
 
 		// clear happens here probably
-		SetupMain3DView( view, nClearFlags );
+		// If we're in the main menu screen, let the cursor move the camera
+		if (engine->IsLevelMainMenuBackground())
+		{
+			CViewSetup viewMenu(view);
+
+			int mx = 0;
+			int my = 0;
+			::input->GetFullscreenMousePos(&mx, &my);
+
+			float dx = (mx / (float)view.width) - 0.5f;
+			float dy = (my / (float)view.height) - 0.5f;
+
+			// Camera movement
+
+			viewMenu.origin -= 3.6f * CurrentViewRight() * dx;
+			viewMenu.origin -= 1.8f * CurrentViewUp() * dy;
+			
+			SetupMain3DView(viewMenu, nClearFlags);
+		}
+		else
+		{
+			SetupMain3DView(view, nClearFlags);
+		}
 			 	  
 		bool bDrew3dSkybox = false;
 		SkyboxVisibility_t nSkyboxVisible = SKYBOX_NOT_VISIBLE;
@@ -2009,7 +2397,7 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 
 		// We can still use the 'current view' stuff set up in ViewDrawScene
 		s_bCanAccessCurrentView = true;
-
+		
 
 		engine->DrawPortals();
 
@@ -2058,6 +2446,30 @@ void CViewRender::RenderView( const CViewSetup &view, int nClearFlags, int whatT
 		IMaterial* pMaterial = blend ? m_ModulateSingleColor : m_TranslucentSingleColor;
 		render->ViewDrawFade( color, pMaterial );
 		PerformScreenOverlay( view.x, view.y, view.width, view.height );
+
+
+
+		// Mirror the screen
+		if (r_mirrored.GetInt() != 0) {
+			UpdateScreenEffectTexture();
+			DrawQuad(m_ScreenFlipMaterial, view.width, view.height);
+		}
+		
+
+		// If in the main menu screen, draw the lambda
+		if (engine->IsLevelMainMenuBackground()) {
+			int mx = 0;
+			int my = 0;
+			::input->GetFullscreenMousePos(&mx, &my);
+		
+			// Map cursor to [0 1] screen coordinates
+			float dx = mx / (float)view.width;
+			float dy = my / (float)view.height;
+
+
+			DrawMainMenuLambda(m_MenuLambdaOutlineMaterial, m_ScreenFlipMaterial, view.width, view.height, dx, dy, view.m_flAspectRatio);
+		}
+
 
 		// Prevent sound stutter if going slow
 		engine->Sound_ExtraUpdate();	
@@ -3102,9 +3514,40 @@ bool CViewRender::DrawOneMonitor( ITexture *pRenderTarget, int cameraNum, C_Poin
 
 	// @MULTICORE (toml 8/11/2006): this should be a renderer....
 	Frustum frustum;
- 	render->Push3DView( monitorView, VIEW_CLEAR_DEPTH | VIEW_CLEAR_COLOR, pRenderTarget, (VPlane *)frustum );
-	ViewDrawScene( false, SKYBOX_2DSKYBOX_VISIBLE, monitorView, 0, VIEW_MONITOR );
- 	render->PopView( frustum );
+
+ 	
+
+	
+	if (pCameraEnt->IsMirrored())
+	{
+		// render to _rt_Camera_PreFlip
+		ITexture *pCameraTargetPreFlip = GetCameraPreFlipTexture();
+
+		render->Push3DView(monitorView, VIEW_CLEAR_DEPTH | VIEW_CLEAR_COLOR, pCameraTargetPreFlip, (VPlane *)frustum);
+		ViewDrawScene(false, SKYBOX_2DSKYBOX_VISIBLE, monitorView, 0, VIEW_MONITOR);
+		render->PopView(frustum);
+
+		// render to _rt_Camera
+		render->Push2DView(monitorView, 0, pRenderTarget, (VPlane *)frustum);
+		DrawQuadOffsetUV(m_CameraFlipMaterial, width, height, pCameraEnt->GetOffsetX(), pCameraEnt->GetOffsetY());
+
+
+		// debug offsetx
+		//float timeVar = gpGlobals->curtime;
+		//timeVar -= (int)timeVar;
+		//Msg(">>> Time variable: %f\n", timeVar);
+		//DrawQuadOffsetUV(m_CameraFlipMaterial, width, height, timeVar, pCameraEnt->GetOffsetY());
+
+		render->PopView(frustum);
+	}
+	else
+	{
+		render->Push3DView(monitorView, VIEW_CLEAR_DEPTH | VIEW_CLEAR_COLOR, pRenderTarget, (VPlane *)frustum);
+		ViewDrawScene(false, SKYBOX_2DSKYBOX_VISIBLE, monitorView, 0, VIEW_MONITOR);
+		render->PopView(frustum);
+	}
+		
+
 
 	// Reset the world fog parameters.
 	if ( fogEnabled )
@@ -3145,13 +3588,15 @@ void CViewRender::DrawMonitors( const CViewSetup &cameraView )
 	int height = pCameraTarget->GetActualHeight();
 
 	C_BasePlayer *player = C_BasePlayer::GetLocalPlayer();
+
+	C_PointCamera *pCameraEnt_check = pCameraEnt;
 	
 	int cameraNum;
 	for ( cameraNum = 0; pCameraEnt != NULL; pCameraEnt = pCameraEnt->m_pNext )
 	{
 		if ( !pCameraEnt->IsActive() || pCameraEnt->IsDormant() )
 			continue;
-
+		pCameraEnt_check = pCameraEnt;
 		if ( !DrawOneMonitor( pCameraTarget, cameraNum, pCameraEnt, cameraView, player, 0, 0, width, height ) )
 			continue;
 

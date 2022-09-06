@@ -772,6 +772,10 @@ void CInput::JoyStickMove( float frametime, CUserCmd *cmd )
 		m_flPreviousJoystickPitch *= -1.0f;
 	}
 
+	// Invert the yaw rotation and strafing movement of the joystick (mirroring moment)
+	m_flPreviousJoystickYaw *= -1.0f;
+	m_flPreviousJoystickSide *= -1.0f;
+
 	// drive yaw, pitch and move like a screen relative platformer game
 	if ( CAM_IsThirdPerson() && thirdperson_platformer.GetInt() )
 	{

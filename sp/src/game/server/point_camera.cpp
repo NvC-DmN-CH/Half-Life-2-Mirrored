@@ -222,6 +222,9 @@ BEGIN_DATADESC( CPointCamera )
 	DEFINE_KEYFIELD( m_flFogEnd,	FIELD_FLOAT, "fogEnd" ),
 	DEFINE_KEYFIELD( m_flFogMaxDensity,	FIELD_FLOAT, "fogMaxDensity" ),
 	DEFINE_KEYFIELD( m_bUseScreenAspectRatio, FIELD_BOOLEAN, "UseScreenAspectRatio" ),
+	DEFINE_KEYFIELD(m_bMirrored, FIELD_BOOLEAN, "isMirrored"),
+	DEFINE_KEYFIELD(m_fOffsetX, FIELD_FLOAT, "OffsetX"),
+	DEFINE_KEYFIELD(m_fOffsetY, FIELD_FLOAT, "OffsetY"),
 	DEFINE_FIELD( m_bActive,		FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_bIsOn,			FIELD_BOOLEAN ),
 
@@ -250,4 +253,7 @@ IMPLEMENT_SERVERCLASS_ST( CPointCamera, DT_PointCamera )
 	SendPropFloat( SENDINFO( m_flFogMaxDensity ), 0, SPROP_NOSCALE ),	
 	SendPropInt( SENDINFO( m_bActive ), 1, SPROP_UNSIGNED ),
 	SendPropInt( SENDINFO( m_bUseScreenAspectRatio ), 1, SPROP_UNSIGNED ),
+	SendPropInt(SENDINFO(m_bMirrored), 0, SPROP_UNSIGNED),
+	SendPropFloat( SENDINFO( m_fOffsetX ), 0, SPROP_NOSCALE),
+	SendPropFloat( SENDINFO( m_fOffsetY ), 0, SPROP_NOSCALE),
 END_SEND_TABLE()

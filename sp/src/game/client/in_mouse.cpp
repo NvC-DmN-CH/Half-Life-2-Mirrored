@@ -674,6 +674,7 @@ void CInput::MouseMove( CUserCmd *cmd )
 		GetMouseDelta( mx, my, &mouse_x, &mouse_y );
 
 		// Apply scaling factor
+		mouse_x *= -1;
 		ScaleMouse( &mouse_x, &mouse_y );
 
 		// Let the client mode at the mouse input before it's used

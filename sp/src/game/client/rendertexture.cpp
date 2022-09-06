@@ -81,6 +81,22 @@ ITexture *GetCameraTexture( void )
 }
 
 //=============================================================================
+// Camera Pre Flip Texture 
+//=============================================================================
+static CTextureReference s_pCameraPreFlipTexture;
+ITexture *GetCameraPreFlipTexture(void)
+{
+	if (!s_pCameraPreFlipTexture)
+	{
+		s_pCameraPreFlipTexture.Init( materials->FindTexture("_rt_Camera_PreFlip", TEXTURE_GROUP_RENDER_TARGET) );
+		Assert( !IsErrorTexture( s_pCameraPreFlipTexture ) );
+		AddReleaseFunc();
+	}
+
+	return s_pCameraPreFlipTexture;
+}
+
+//=============================================================================
 // Full Frame Depth Texture
 //=============================================================================
 static CTextureReference s_pFullFrameDepthTexture;
@@ -247,6 +263,7 @@ void ReleaseRenderTargets( void )
 {
 	s_pPowerOfTwoFrameBufferTexture.Shutdown();
 	s_pCameraTexture.Shutdown();
+	s_pCameraPreFlipTexture.Shutdown();
 	s_pWaterReflectionTexture.Shutdown();
 	s_pWaterRefractionTexture.Shutdown();
 	s_pQuarterSizedFB0.Shutdown();

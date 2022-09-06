@@ -272,7 +272,7 @@ void CWeaponBugBait::ThrowGrenade( CBasePlayer *pPlayer )
 	vThrowPos = pPlayer->EyePosition();
 
 	vThrowPos += vForward * 18.0f;
-	vThrowPos += vRight * 12.0f;
+	vThrowPos -= vRight * 12.0f;
 
 	pPlayer->GetVelocity( &vThrowVel, NULL );
 	vThrowVel += vForward * 1000;

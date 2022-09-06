@@ -781,12 +781,26 @@ void CBaseCombatWeapon::MakeTracer( const Vector &vecTracerSrc, const trace_t &t
 	const char *pszTracerName = GetTracerType();
 
 	Vector vNewSrc = vecTracerSrc;
+
+	// shift the player tracers so that they appear to get emitted from the gun
+	if (pOwner->IsPlayer()) {
+		Vector ovForward, ovRight, ovUp;
+		pOwner->GetVectors(&ovForward, &ovRight, &ovUp);
+		vNewSrc -= ovRight * 11; // fairly odd grandparents
+
+		// what the fück.. I searched far and wide for where the player tracer offsets are hardcodded, so i had to improvise...
+		// lord forgive me for doing this for check for every tracer
+		// at least i can redeem some performance by commenting out the g_pGameRules->IsMultiplayer
+		// i mean... hl2 isnt multiplayer so it should be alright?
+		// im doing this^ because when you flip the viewmodel, the place from where the tracers get emitted don't flip
+	}
+
 	int iEntIndex = pOwner->entindex();
 
-	if ( g_pGameRules->IsMultiplayer() )
-	{
-		iEntIndex = entindex();
-	}
+	//if ( g_pGameRules->IsMultiplayer() )
+	//{
+	//	iEntIndex = entindex();
+	//}
 
 	int iAttachment = GetTracerAttachment();
 

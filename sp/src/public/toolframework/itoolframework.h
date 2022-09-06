@@ -94,6 +94,9 @@ struct MonitorRecordingState_t
 	float	m_flFogStart;
 	float	m_flFogEnd;
 	Color	m_FogColor;
+	bool	m_bMirrored;
+	float	m_fOffsetX;
+	float	m_fOffsetY;
 };
 
 struct EntityTeleportedRecordingState_t
