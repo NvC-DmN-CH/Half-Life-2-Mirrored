@@ -1263,20 +1263,23 @@ void CViewRender::DrawQuad(IMaterial* pMat, int width, int height)
 //	meshBuilder.TexCoord2f(0, 1, 1);
 //	meshBuilder.AdvanceVertex();
 
-	meshBuilder.Position3f(-1, 1, 0.5f);
-	meshBuilder.TexCoord2f(0, 1 + halfPixelWidth, 0 + halfPixelHeight);
+
+	// the vertices are not [0 to 1] but [-1.1 to 1.1] to ensure that there are no 1px gaps on any edges!!
+	// the uv's are in [0 to 1] space, so they go x0.5 less out, so instead of going 0.1 outside, its 0.05
+	meshBuilder.Position3f(-1.1f, 1.1f, 0.5f);
+	meshBuilder.TexCoord2f(0, 1.05f + halfPixelWidth, -0.05f + halfPixelHeight);
 	meshBuilder.AdvanceVertex();
 
-	meshBuilder.Position3f(1, 1, 0.5f);
-	meshBuilder.TexCoord2f(0, 0 + halfPixelWidth, 0 + halfPixelHeight);
+	meshBuilder.Position3f(1.1f, 1.1f, 0.5f);
+	meshBuilder.TexCoord2f(0, -0.05f + halfPixelWidth, -0.05f + halfPixelHeight);
 	meshBuilder.AdvanceVertex();
 
-	meshBuilder.Position3f(1, -1, 0.5f);
-	meshBuilder.TexCoord2f(0, 0 + halfPixelWidth, 1 + halfPixelHeight);
+	meshBuilder.Position3f(1.1f, -1.1f, 0.5f);
+	meshBuilder.TexCoord2f(0, -0.05f + halfPixelWidth, 1.05f + halfPixelHeight);
 	meshBuilder.AdvanceVertex();
 
-	meshBuilder.Position3f(-1, -1, 0.5f);
-	meshBuilder.TexCoord2f(0, 1 + halfPixelWidth, 1 + halfPixelHeight);
+	meshBuilder.Position3f(-1.1f, -1.1f, 0.5f);
+	meshBuilder.TexCoord2f(0, 1.05f + halfPixelWidth, 1.05f + halfPixelHeight);
 	meshBuilder.AdvanceVertex();
 
 	meshBuilder.End();
