@@ -1,0 +1,148 @@
+================================================================
+Mirroring some cameras:
+================================================================
+
+d1_trainstation_01
+	breen camera:
+		isMirrored: 1
+		OffsetX: -0.168
+	kleiner camera:
+		isMirrored: 1
+
+d1_trainstation_02
+	breen camera:
+		isMirrored: 1
+		OffsetX: -0.168
+
+d1_trainstation_06
+	citadel:
+		angles: 0 270 -180
+
+
+================================================================
+CITADEL:
+================================================================
+
+
+
+prop_dynamic
+	disableshadows 1
+	solid 0
+using this model: models/props_combine/Combine_Citadel001b_open_vis_normal.mdl
+
+and additionally, for each map it's placed like so:
+
+d1_canals_05
+	origin 1824 -4416 -8087
+	angles 0 0 0
+
+d1_canals_06
+	origin 1824 -4416 -8087
+	angles 0 0 0
+
+d1_canals_07
+	origin 12576 -3697.69 -8087
+	angles 0 0 0
+
+
+
+
+
+the prop_dynamic has this modelname for the maps below
+models/props_combine/Combine_Citadel001b_open_vis_flipped.mdl
+
+d1_canals_01
+	origin 14174.1 -5806.06 -67.0901
+	angles 0 270 0
+
+d1_canals_01a
+	origin 14174.1 -5806.06 -67.0901
+	angles 0 270 0
+
+d1_canals_02
+	origin 14174.1 -6990.06 -8043.09
+	angles 0 270 0
+
+d1_canals_03
+	origin 14174.1 -5806.06 -67.0901
+	angles 0 270 0
+
+
+
+d3_c17_01
+	origin 861.7 5457.94 2184.91
+	angles 0 270 0
+
+d3_c17_02
+	origin 861.65 5457.94 1928.91
+	angles 0 270 0
+
+d3_c17_03
+	origin 861.65 5457.94 2184.91
+	angles 0 270 0
+
+d3_c17_04
+	origin -2210.35 5457.94 2184.91
+	angles 0 270 0
+
+d3_c17_05
+	origin -2210.35 5457.94 2184.91
+	angles 0 270 0
+
+d3_c17_06a
+	origin -2210.35 5457.94 2184.91
+	angles 0 270 0
+
+d3_c17_06b
+	origin -2210.35 5457.94 2184.91
+	angles 0 270 0
+
+d3_c17_07
+	origin -2210.35 5457.94 2184.91
+	angles 0 270 0
+
+d3_c17_09
+	origin -2210.35 5457.94 2184.91
+	angles 0 270 0
+
+
+
+===============
+HDR adjustments
+===============
+
+
+setbloomscale 0
+setautoexposuremin 1
+setautoexposuremax 2
+	d2_prison_01
+	d2_prison_02
+	d2_prison_03
+	d2_prison_05
+	d2_prison_06
+	d2_prison_07
+
+
+setautoexposuremax 2
+	d2_coast_01
+	d2_coast_03
+	d2_coast_04
+	d2_coast_05
+	d2_coast_07
+	d2_coast_09
+	d2_coast_11
+
+setautoexposuremax 2
+
+===============
+misc
+===============
+background03.bsp
+2 new prop_dynamic_override entities:
+	models/props_buildings/watertower_001c.mdl
+	-2476.28 -323.52 -3061.61
+	0 314.5 0
+
+	models/props_buildings/collapsedbuilding01a.mdl
+	-2528 1467.36 -3184.45
+	0 359.5 0
