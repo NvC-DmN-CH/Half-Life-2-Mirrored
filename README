@@ -1,3 +1,12 @@
+Hello
+I am not the best programmer and I certainly didn't know what I am doing but I did it!
+
+What I changed is, basically making the viewmodel left handed and then mirroring the screen (without the hud), and inverting the controls
+And then some bug fixing as a result of those changes ^ since valve hardcoded some stuff like when you throw a grenade, it comes from the right, and now it should be from the left and etc.
+And other additional stuff, which I forgot and pushed it all in 1 commit (exemplary programming practices right here!!)
+
+\/ Copy paste of the original readme.txt below \/
+=============================================================
                SOURCE 1 SDK LICENSE
 
 Source SDK Copyright(c) Valve Corp.  
@@ -6,7 +15,7 @@ THIS DOCUMENT DESCRIBES A CONTRACT BETWEEN YOU AND VALVE
 CORPORATION ("Valve").  PLEASE READ IT BEFORE DOWNLOADING OR USING 
 THE SOURCE ENGINE SDK ("SDK"). BY DOWNLOADING AND/OR USING THE 
 SOURCE ENGINE SDK YOU ACCEPT THIS LICENSE. IF YOU DO NOT AGREE TO 
-THE TERMS OF THIS LICENSE PLEASE DON’T DOWNLOAD OR USE THE SDK.  
+THE TERMS OF THIS LICENSE PLEASE DONâ€™T DOWNLOAD OR USE THE SDK.  
 
   You may, free of charge, download and use the SDK to develop a modified Valve game 
 running on the Source engine.  You may distribute your modified Valve game in source and 
