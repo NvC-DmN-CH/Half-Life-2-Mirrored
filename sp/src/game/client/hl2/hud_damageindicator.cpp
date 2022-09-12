@@ -419,7 +419,7 @@ void CHudDamageIndicator::GetDamagePosition( const Vector &vecDelta, float *flRo
 	VectorNormalize(forward);
 	CrossProduct( up, forward, right );
 	float front = DotProduct(vecDelta, forward);
-	float side = DotProduct(vecDelta, right);
+	float side = DotProduct(vecDelta, -right);		// the right *-1 in the wrong place can make all the difference in the world
 	float xpos = flRadius * -side;
 	float ypos = flRadius * -front;
 
