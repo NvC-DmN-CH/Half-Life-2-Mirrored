@@ -1,6 +1,7 @@
 # Files to ignore when considering what GIT should commit.
 
 # Visual Studio 
+**/.vs
 *.suo
 *.user
 *.sln.docstates
@@ -18,6 +19,7 @@ ipch
 *.opensdf
 *.idb
 *.vcxproj
+*.vcxproj~
 *.sln
 
 # OSX/Linux build products
@@ -54,4 +56,11 @@ config.cfg
 # shader files
 *.tmp
 
-/sp/src
+# Build or development specific files and folders
+**/Debug_mod_hl2
+**/Release_mod_hl2
+**/Debug
+**/Release
+*.vpc.sentinel
+*.vcxproj.vpc_crc
+*.vcxproj.filters
